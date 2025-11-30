@@ -1,23 +1,26 @@
-# Use the official Node.js image from the Docker Hub
-FROM node:22-alpine
+ FROM node:22-alpine
 
-# Set the working directory inside the container
+# Create app directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json first (better cache usage)
 COPY package*.json ./
 
+# Fix permissions (very important when Jenkins mounts workspace)
+RUN mkdir -p /app/node_modules && chown -R node:node /app
+
+# Configure npm cache location to avoid root locked directory issue
+RUN npm config set cache /app/.npm-cache --global
+
+# Switch to non-root user
+USER node
 
 # Install dependencies
 RUN npm install
-RUN chmod -R +x node_modules/.bin
 
-# Copy the rest of the application code
-COPY . .
+# Copy rest of app
+COPY --chown=node:node . .
 
-# Expose the application port
 EXPOSE 3000
 
-# Command to run the application
 CMD [ "node", "app.js" ]
-
