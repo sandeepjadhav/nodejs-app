@@ -34,14 +34,13 @@ pipeline {
             }
         }
         stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh 'kubectl get nodes'
-                        sh 'kubectl apply -f kubernetes-deployment.yml'
-                    }
-                }
-            }
+             steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            sh 'kubectl config view'
+            sh 'kubectl get nodes'
+            sh 'kubectl apply -f kubernetes-deployment.yml'
+        }
+    }
         }
     }
 
