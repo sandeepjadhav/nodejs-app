@@ -14,12 +14,6 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -28,15 +22,18 @@ pipeline {
             }
         }
 
-        stage('Run Tests in Docker') {
+        
+        stage('Run Tests Inside Container') {
             steps {
                 script {
-                    dockerImage.inside("--entrypoint=''") {
+                    dockerImage.inside {
+                        sh 'npm install'
                         sh 'npm test'
                     }
                 }
             }
         }
+
 
         stage('Deploy to Kubernetes') {
             when {
