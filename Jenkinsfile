@@ -33,22 +33,11 @@ pipeline {
                 }
             }
         }
-
-
         stage('Deploy to Kubernetes') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
-                    kubeconfig(
-                        credentialsId: 'kubeconfig', 
-                        serverUrl: 'https://127.0.0.1:32769'
-                    ) {
-                        sh """
-                        kubectl apply -f kubernetes-deployment.yml
-                        kubectl rollout status deployment/nodejs-app --timeout=60s
-                        """
+                      kubeconfig(credentialsId: 'kubeconfig', serverUrl: 'https://127.0.0.1:32769') {
+                        sh 'kubectl apply -f kubernetes-deployment.yml'
                     }
                 }
             }
