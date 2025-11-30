@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     sh 'eval $(minikube -p minikube docker-env)'
-                    dockerImage = docker.build("${DOCKER_IMAGE}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
                 }
             }
         }
