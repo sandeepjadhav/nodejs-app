@@ -66,7 +66,7 @@ pipeline {
 
     stage('Deploy to Kubernetes') {
     steps {
-        withKubeConfig(credentialsId: 'kubeconfig-minikube') {
+        withKubeConfig(credentialsId: 'kubeconfig') {
             sh 'kubectl apply -f kubernetes-deployment.yml'
             sh 'kubectl rollout restart deployment nodejs-app'
         }

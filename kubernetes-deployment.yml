@@ -12,6 +12,8 @@ spec:
       labels:
         app: nodejs-app
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret-updated 
       containers:
       - name: nodejs-app
         image: sandeepdj11/nodejs-app:latest
