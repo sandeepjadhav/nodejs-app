@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: nodejs-app:latest
-        imagePullPolicy: IfNotPresent
+        image: sandeepdj11/nodejs-app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---

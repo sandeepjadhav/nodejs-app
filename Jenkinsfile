@@ -14,15 +14,27 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'eval $(minikube -p minikube docker-env)'
-                    dockerImage = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             sh 'eval $(minikube -p minikube docker-env)'
+        //             dockerImage = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
+        //         }
+        //     }
+        // }
+        stage('Build & Push Docker Image') {
+        steps {
+            script {
+                def imageTag = "${env.BUILD_ID}"
+                dockerImage = docker.build("sandeepdj11/nodejs-app:${imageTag}")
+
+                docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
+                    dockerImage.push()
+                    dockerImage.push("latest")  // optional but useful
+                }
                 }
             }
         }
-
         
         stage('Run Tests Inside Container') {
             steps {
@@ -34,15 +46,24 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
-             steps {
-        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh 'kubectl config view'
-            sh 'kubectl get nodes'
+    //     stage('Deploy to Kubernetes') {
+    //          steps {
+    //     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+    //         sh 'kubectl config view'
+    //         sh 'kubectl get nodes'
+    //         sh 'kubectl apply -f kubernetes-deployment.yml'
+    //     }
+    // }
+    //     }
+
+    stage('Deploy to Kubernetes') {
+    steps {
+        withKubeConfig(credentialsId: 'kubeconfig-minikube') {
             sh 'kubectl apply -f kubernetes-deployment.yml'
+            sh 'kubectl rollout restart deployment nodejs-app'
         }
     }
-        }
+}
     }
 
     post {
