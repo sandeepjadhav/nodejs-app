@@ -14,25 +14,34 @@ pipeline {
             }
         }
 
-        // stage('Build Docker Image') {
-        //     steps {
-        //         script {
-        //             sh 'eval $(minikube -p minikube docker-env)'
-        //             dockerImage = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
-        //         }
-        //     }
-        // }
-        stage('Build & Push Docker Image') {
-        steps {
-            script {
-                dockerImage = docker.build("sandeepdj11/nodejs-app:${env.BUILD_ID}")
-                docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
-                    dockerImage.push()
-                    dockerImage.push("latest")  // optional but useful
-                }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'eval $(minikube -p minikube docker-env)'
+                    dockerImage = docker.build("nodejs-app:latest")
                 }
             }
         }
+        stage('Push Image') {
+            steps {
+                script {
+                    docker.withRegistry('', 'docker-hub-credentials') {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+        // stage('Build & Push Docker Image') {
+        // steps {
+        //     script {
+        //         dockerImage = docker.build("sandeepdj11/nodejs-app:${env.BUILD_ID}")
+        //         docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
+        //             dockerImage.push()
+        //             dockerImage.push("latest")  // optional but useful
+        //         }
+        //         }
+        //     }
+        // }
         
         stage('Run Tests Inside Container') {
             steps {
