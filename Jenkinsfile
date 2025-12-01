@@ -25,9 +25,7 @@ pipeline {
         stage('Build & Push Docker Image') {
         steps {
             script {
-                def imageTag = "${env.BUILD_ID}"
-                dockerImage = docker.build("sandeepdj11/nodejs-app:${imageTag}")
-
+                dockerImage = docker.build("sandeepdj11/nodejs-app:${env.BUILD_ID}")
                 docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-cred') {
                     dockerImage.push()
                     dockerImage.push("latest")  // optional but useful
