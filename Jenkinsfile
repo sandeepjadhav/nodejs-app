@@ -66,7 +66,7 @@ pipeline {
           sh """
             kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/nodejs-app nodejs-app=${IMAGE_FULL} --record || true
             kubectl --kubeconfig=$KUBECONFIG_FILE apply -f kubernetes-deployment.yml
-            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/nodejs-app --timeout=120s
+            kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/nodejs-app --timeout=600s
           """
         }
       }
