@@ -64,7 +64,7 @@ pipeline {
       steps {
         withCredentials([file(credentialsId: "${KUBECONFIG_CRED}", variable: 'KUBECONFIG_FILE')]) {
           sh """
-            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/nodejs-app nodejs-app=${IMAGE_FULL} --record || true
+            kubectl --kubeconfig=$KUBECONFIG_FILE set image deployment/nodejs-app nodejs-app=latest--record || true
             kubectl --kubeconfig=$KUBECONFIG_FILE apply -f kubernetes-deployment.yml
             kubectl --kubeconfig=$KUBECONFIG_FILE rollout status deployment/nodejs-app
           """
