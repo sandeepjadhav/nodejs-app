@@ -15,8 +15,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  logger.info("This is the health route");
-  res.send("This is the health route");
+  logger.info("This is the health route updated");
+  res.send("This is the health route updated");
 });
 
 app.post("/users", (req, res) => {
